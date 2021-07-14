@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.cybersource.sample.TokensResponseActivity"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="40dp"
+        >
+
+        <TextView
+            android:id="@+id/appName"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:gravity="start"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/token_response_description" />
+
+
+        <TextView
+            android:id="@+id/encrypted_data_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tokenSuccess"
+            android:textStyle="bold"
+            />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/very_lighter_gray"
+            />
+
+        <ScrollView
+            android:id="@+id/response_scrollview"
+            android:layout_width="fill_parent"
+            android:layout_height="100dp"
+            android:scrollbars="vertical"
+            android:layout_marginTop="5dp"
+            android:fillViewport="true">
+
+            <TextView
+                android:id="@+id/encrypted_data_view"
+                android:layout_width="match_parent"
+                android:layout_height="100dp" />
+        </ScrollView>
+
+        <Button
+            android:id="@+id/repeatDemoBtn"
+            android:layout_width="@dimen/buy_button_width"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:layout_marginBottom="@dimen/padding_large"
+            android:text="@string/button_text_repeat_demo" />
+    </LinearLayout>
+</LinearLayout>

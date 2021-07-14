@@ -1,0 +1,153 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+    <RelativeLayout
+        android:id="@+id/keyed_card_details_relative_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="16dp"
+        android:layout_weight="7"
+        android:background="@color/white"
+        android:gravity="center_horizontal"
+        >
+
+        <RelativeLayout
+            android:id="@+id/card_details_relative_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="10dp"
+            >
+
+            <LinearLayout
+                android:id="@+id/card_number_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                >
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginRight="10dp"
+                    android:src="@drawable/ic_credit_card_grey600_36dp"
+                    app:tint="@color/background_light_blue" />
+                <EditText
+                    android:id="@+id/card_number_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/card_number"
+                    android:imeOptions="actionNext"
+                    android:inputType="number"
+                    android:nextFocusDown="@+id/date_month_view"
+                    android:textSize="24sp"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/date_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/card_number_layout"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                >
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginRight="10dp"
+                    android:src="@drawable/ic_today_grey600_36dp"
+                    app:tint="@color/background_light_blue" />
+
+                <EditText
+                    android:id="@+id/date_month_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/month"
+                    android:imeOptions="actionNext"
+                    android:inputType="number"
+                    android:maxLength="2"
+                    android:nextFocusDown="@+id/date_year_view"
+                    android:textSize="24sp"
+                    />
+
+                <EditText
+                    android:id="@+id/date_year_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/year"
+                    android:imeOptions="actionNext"
+                    android:inputType="number"
+                    android:maxLength="2"
+                    android:nextFocusDown="@+id/security_code_view"
+                    android:textSize="24sp"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/security_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/date_layout"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                >
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginRight="10dp"
+                    android:src="@drawable/ic_lock_outline_grey600_36dp"
+                    app:tint="@color/background_light_blue" />
+
+                <EditText
+                    android:id="@+id/security_code_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/cvv"
+                    android:imeOptions="actionNext"
+                    android:inputType="number"
+                    android:maxLength="3"
+                    android:nextFocusDown="@+id/zip_code_view"
+                    android:textSize="24sp"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/security_layout"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                >
+
+                <Button
+                    android:id="@+id/button_checkout_order"
+                    android:layout_width="@dimen/buy_button_width"
+                    android:layout_height="wrap_content"
+                    android:background="@color/google_green"
+                    android:text="@string/button_text_token"
+                    android:textAllCaps="false"
+                    android:textSize="18sp"
+                    android:layout_gravity="center"
+                    android:textColor="@color/white"
+                    />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+    <include layout="@layout/layout_response_token"></include>
+</LinearLayout>
