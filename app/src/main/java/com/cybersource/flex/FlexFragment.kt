@@ -10,23 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
-import com.cybersource.flex.Authorization.core.Authorization
-import com.cybersource.flex.Authorization.core.MerchantConfig
-import com.cybersource.flex.Authorization.payloaddigest.PayloadDigest
-import com.cybersource.flex.Authorization.util.Constants
-import com.cybersource.flex.Authorization.util.PayloadUtility
 import com.cybersource.flex.android.*
-import com.cybersource.flex.sessions.api.Environment
-import com.cybersource.flex.sessions.api.FlexSessionServiceGenerator
-import com.cybersource.flex.sessions.model.*
-import com.google.gson.Gson
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody.Companion.toRequestBody
-
+import com.cybersource.flex.android.CaptureContext.fromJwt
 
 class FlexFragment : Fragment() {
 
@@ -49,12 +34,6 @@ class FlexFragment : Fragment() {
     private var keyId: String? = null
     private var container: ViewGroup? = null
     private var inflater: LayoutInflater? = null
-
-    companion object {
-        val MERCHANT_ID = ""
-        val MERCHANT_SECRET = ""
-        val MERCHANT_KEY = ""
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,7 +69,6 @@ class FlexFragment : Fragment() {
     }
 
     private fun createToken(keyId: String) {
-        //if (!areFormDetailsValid()) return;
 
         progressDialog = ProgressDialog.show(getActivity(), this.getString(R.string.progress_title),
                 this.getString(R.string.progress_message), true);
@@ -98,7 +76,12 @@ class FlexFragment : Fragment() {
 
         val payloadItems = getPayloadData()
 
-        val cc = CaptureContext.fromJwt(keyId)
+        /*
+            This is the place where we convert the Capture context response to actual capture context object.
+            Use FlexService->createTokenAsyncTask() method to generate the TransientToken. Input for createTokenAsyncTask()
+            method will be capture context(cc) string and the event listeners. Note createTokenAsyncTask() is an asynchronous method.
+         */
+        val cc = fromJwt(keyId)
         var flexService = FlexService.getInstance()
 
         try {
@@ -140,12 +123,10 @@ class FlexFragment : Fragment() {
         }
     }
 
-    private fun moveToTokensResponseActivity(response: TransientToken) {
-        val intent = Intent(activity, TokensResponseActivity::class.java)
-        intent.putExtra("TransientToken", response.id)
-        startActivity(intent)
-    }
-
+    /*
+        Payload is must for creating transient token. The sample payload creation in this SampleApp is
+        only for demonstration purpose, this should be changed according to your use cases.
+    */
     private fun getPayloadData(): Map<String, Any>? {
         val sad: MutableMap<String, Any> = HashMap()
 
@@ -181,26 +162,18 @@ class FlexFragment : Fragment() {
             }
 
             override fun afterTextChanged(editable: Editable) {
-                // disable text watcher
                 cardNumberView.removeTextChangedListener(this)
 
-                // record cursor position as setting the text in the textview
-                // places the cursor at the end
                 val cursorPosition = cardNumberView.selectionStart
                 val withSpaces = formatText(editable)
                 cardNumberView.setText(withSpaces)
-                // set the cursor at the last position + the spaces added since the
-                // space are always added before the cursor
                 cardNumberView.setSelection(cursorPosition + (withSpaces.length - editable.length))
 
-                // if a space was deleted also deleted just move the cursor
-                // before the space
                 if (spaceDeleted) {
                     cardNumberView.setSelection(cardNumberView.selectionStart - 1)
                     spaceDeleted = false
                 }
 
-                // enable text watcher
                 cardNumberView.addTextChangedListener(this)
             }
 
@@ -219,87 +192,36 @@ class FlexFragment : Fragment() {
         })
     }
 
-    private fun requestCaptureContext() {
-        val service = FlexSessionServiceGenerator().getRetrofirApiService(Environment.SANDBOX)
-
-        var cardData = FlexCardData(
-                FlexFieldData(true), //card number
-                FlexFieldData(true), //security code
-                FlexFieldData(true), //expiration Month
-                FlexFieldData(true), //expiration year
-                FlexFieldData(false) //type
-        )
-
-        var paymentInfo = FlexPaymentInfo(cardData)
-        val sessionFields = FlexSessionFields(paymentInfo)
-        var requestObj = FlexSessionRequest(sessionFields)
-
-        val gson = Gson()
-
-        var merchantConfig = MerchantConfig()
-        merchantConfig.merchantID = MERCHANT_ID
-        merchantConfig.merchantKeyId = MERCHANT_KEY
-        merchantConfig.merchantSecretKey = MERCHANT_SECRET
-
-        merchantConfig.requestHost = Constants.HOSTCAS
-
-        val jsonObjectString = gson.toJson(requestObj)
-        merchantConfig.requestData = jsonObjectString
-
-        val body = jsonObjectString.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-        progressDialog = ProgressDialog.show(getActivity(), this.getString(R.string.progress_title),
-                this.getString(R.string.session_progress_message), true);
-
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val keyGenerationResponse = service.createCaptureContext(
-                        body,
-                        getHeaderMapForCaptureContext(merchantConfig)
-                )
-                withContext(Dispatchers.Main) {
-                    if (progressDialog.isShowing()) progressDialog.dismiss()
-
-                    if (keyGenerationResponse.isSuccessful) {
-                        keyGenerationResponse.body()?.let {
-                            keyId = it
-                            createToken(it)
-                        }
-                        print(keyGenerationResponse)
-                    } else {
-                        if (responseLayout.getVisibility() != View.VISIBLE) responseLayout.setVisibility(View.VISIBLE)
-                        responseTitle.setText(getText(R.string.tokenError))
-                        responseValue.setText("Capture context error...")
-                    }
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    if (progressDialog.isShowing()) progressDialog.dismiss()
-
-                    if (responseLayout.getVisibility() != View.VISIBLE) responseLayout.setVisibility(View.VISIBLE)
-                    responseTitle.setText(getText(R.string.tokenError))
-                    responseValue.setText(e.localizedMessage)
-                }
-            }
-        }
+    private fun moveToTokensResponseActivity(response: TransientToken) {
+        val intent = Intent(activity, TokensResponseActivity::class.java)
+        intent.putExtra("TransientToken", response.id)
+        startActivity(intent)
     }
 
-    private fun getHeaderMapForCaptureContext(merchantConfig: MerchantConfig): Map<String, String> {
-        val headerMap = mutableMapOf<String, String>()
-        headerMap[Constants.V_C_MERCHANTID] = MERCHANT_ID
-        headerMap[Constants.ACCEPT] = "application/jwt"
-        headerMap["Content-Type"] = "application/json;charset=utf-8"
-        headerMap[Constants.DATE] = PayloadUtility().getNewDate()
-        headerMap[Constants.HOST] = Constants.HOSTCAS
-        headerMap["Connection"] = "keep-alive"
-        headerMap["User-Agent"] = "Android"
+    private fun requestCaptureContext() {
+        progressDialog = ProgressDialog.show(getActivity(), this.getString(R.string.progress_title),
+            this.getString(R.string.session_progress_message), true);
 
-        val value = Authorization().getToken(merchantConfig)
-        headerMap[Constants.SIGNATURE] = value
+        /*  WARNING:
+            Before creating TransientToken make sure you have a valid capture context.
+            And below creation of capture context code is for demonstration purpose only.
+        */
+        CaptureContextHelper().createCaptureContext(object :CaptureContextEvent {
+            override fun onCaptureContextError(e: Exception) {
+                if (progressDialog.isShowing()) progressDialog.dismiss()
 
-        val payloadDigest = PayloadDigest(merchantConfig)
-        val digest = payloadDigest.getDigest()
-        headerMap[Constants.DIGEST] = digest!!
+                if (responseLayout.getVisibility() != View.VISIBLE) responseLayout.setVisibility(View.VISIBLE)
+                responseTitle.setText(getText(R.string.tokenError))
+                responseValue.setText(e.localizedMessage)
+            }
 
-        return headerMap
+            override fun onCaptureContextResponse(cc: String) {
+                if (progressDialog.isShowing()) progressDialog . dismiss()
+
+                keyId = cc
+                createToken(cc)
+                print(cc)
+            }
+        })
     }
 }
