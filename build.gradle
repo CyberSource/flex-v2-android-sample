@@ -4,12 +4,7 @@ buildscript {
     repositories {
         google()
         jcenter()
-        maven {
-            authentication {
-                basic(BasicAuthentication)
-            }
-            url "https://stash.trusted.visa.com:7990/scm/mps/flex-api-android-sample-app.git"
-        }
+        mavenCentral()
     }
     dependencies {
         classpath "com.android.tools.build:gradle:4.1.1"

@@ -194,7 +194,7 @@ class FlexFragment : Fragment() {
 
     private fun moveToTokensResponseActivity(response: TransientToken) {
         val intent = Intent(activity, TokensResponseActivity::class.java)
-        intent.putExtra("TransientToken", response.id)
+        intent.putExtra("TransientToken", response.encoded)
         startActivity(intent)
     }
 

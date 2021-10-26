@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: com.cybersource:flex-api-android-client:1.0.1">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.cybersource/flex-api-android-client/1.0.1/b8c7d705f812cdf1ba6a17bece46dda68087802c/flex-api-android-client-1.0.1.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.cybersource/flex-api-android-client/1.0.1/4eb1818d09f4ed5d7992336e5852ebfc48eb8037/flex-api-android-client-1.0.1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.cybersource/flex-api-android-client/1.0.1/7d1cfd9a1c78b2506b5b6d172b03c365d72676df/flex-api-android-client-1.0.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
