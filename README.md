@@ -9,7 +9,7 @@
   ### Gradle
   ```
   dependencies {
-    implementation "com.cybersource:flex-api-android-client:1.0.0"
+    implementation "com.cybersource:flex-api-android-client:1.0.1"
   }
  ```  
  Note: Update your Gradle local.properties with your local machines username
